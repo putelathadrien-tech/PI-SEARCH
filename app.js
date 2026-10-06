@@ -178,7 +178,7 @@
     if (updateUrl) {
       var params = new URLSearchParams({ q: q });
       if (enc !== "alpha") params.set("enc", enc);
-      history.replaceState(null, "", "?" + params.toString());
+      try { history.replaceState(null, "", "?" + params.toString()); } catch (e) { /* not allowed in some hosts */ }
     }
     var t = performance.now();
     var res = P.search(digits, q, enc);
@@ -195,9 +195,21 @@
     r.addEventListener("change", function () { if (digits && input.value) run(true); });
   });
 
+  // Lucky picks search right away instead of reloading the page.
+  form.querySelectorAll(".examples a").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      var p = new URLSearchParams(link.getAttribute("href").slice(1));
+      input.value = p.get("q") || "";
+      form.querySelector("input[value=" + (p.get("enc") === "keypad" ? "keypad" : "alpha") + "]").checked = true;
+      if (digits) run(true);
+    });
+  });
+
   // Pre-fill from ?q=...&enc=... (like pinames.org/index.php?q=a)
   var params = new URLSearchParams(location.search);
-  if (params.get("q")) input.value = params.get("q");
+  // With no search in the address, open on an example so the table isn't empty.
+  input.value = params.get("q") || "I love pi";
   if (params.get("enc") === "keypad") form.querySelector("input[value=keypad]").checked = true;
 
   button.disabled = true;
