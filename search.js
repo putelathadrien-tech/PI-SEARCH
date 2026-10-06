@@ -143,6 +143,33 @@
     };
   }
 
+  /**
+   * Turn a packed chunk (two digits per byte, first digit in the high
+   * 4 bits) back into a string of digits.
+   */
+  function unpack(bytes) {
+    var out = new Uint8Array(bytes.length * 2);
+    for (var i = 0, j = 0; i < bytes.length; i++, j += 2) {
+      out[j] = 48 + (bytes[i] >> 4);
+      out[j + 1] = 48 + (bytes[i] & 15);
+    }
+    if (typeof TextDecoder !== "undefined") return new TextDecoder("latin1").decode(out);
+    return Buffer.from(out).toString("latin1");
+  }
+
+  /**
+   * Look for every code in `codes` inside `text`, whose first digit is at
+   * position `startPos`. Returns { code: position } for the codes found.
+   */
+  function scan(text, startPos, codes) {
+    var found = {};
+    codes.forEach(function (code) {
+      var i = text.indexOf(code);
+      if (i !== -1) found[code] = startPos + i;
+    });
+    return found;
+  }
+
   var api = {
     ENCODINGS: ENCODINGS,
     normalize: normalize,
@@ -150,7 +177,9 @@
     breakdown: breakdown,
     find: find,
     search: search,
-    context: context
+    context: context,
+    unpack: unpack,
+    scan: scan
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;

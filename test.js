@@ -3,7 +3,7 @@ const assert = require("assert");
 const fs = require("fs");
 const P = require("./search.js");
 
-const digits = fs.readFileSync(__dirname + "/data/pi.txt", "utf8");
+const digits = P.unpack(fs.readFileSync(__dirname + "/data/pi-000.bin"));
 
 assert.strictEqual(digits.slice(0, 10), "1415926535");
 assert.strictEqual(P.normalize("  Hélène, héllo!! "), "HELENE HELLO");
@@ -34,5 +34,12 @@ assert.ok(k.allWordsFound);
 
 const c = P.context(digits, 1, 4, 5);
 assert.deepStrictEqual(c, { before: "", match: "1415", after: "92653", startPos: 1 });
+
+// Packed chunks: two digits per byte, first digit in the high 4 bits.
+assert.strictEqual(P.unpack(Uint8Array.from([0x14, 0x15, 0x92])), "141592");
+assert.strictEqual(digits.length, 10000000);
+
+// scan() reports positions relative to where the text starts in pi.
+assert.deepStrictEqual(P.scan("99141599", 101, ["1415", "777"]), { "1415": 103 });
 
 console.log("All tests passed");
