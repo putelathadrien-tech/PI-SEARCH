@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PI Search</title>
+  <meta name="description" content="Find your name or any sentence hidden in the first 10 million digits of pi.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1><span class="pi">π</span> PI Search</h1>
+    <p class="tagline">Find names <em>and</em> sentences hidden in the first 10,000,000 digits of pi.</p>
+  </header>
+
+  <main>
+    <form id="search-form" autocomplete="off">
+      <div class="bar">
+        <input id="q" name="q" type="text" placeholder="Type a name or a sentence…" aria-label="Name or sentence" autofocus>
+        <button type="submit" id="go">Search</button>
+      </div>
+      <div class="options">
+        <label><input type="radio" name="enc" value="alpha" checked> Alphabet (A=01 … Z=26)</label>
+        <label><input type="radio" name="enc" value="keypad"> Phone keypad (ABC=2 … WXYZ=9)</label>
+      </div>
+      <div class="examples">Try:
+        <a href="?q=a">a</a>
+        <a href="?q=Emma">Emma</a>
+        <a href="?q=Hadrien">Hadrien</a>
+        <a href="?q=I+love+pi">I love pi</a>
+        <a href="?q=hello+world&amp;enc=keypad">hello world (keypad)</a>
+      </div>
+    </form>
+
+    <div id="status" class="status">Loading the digits of pi…</div>
+    <div id="results"></div>
+
+    <section class="how">
+      <h2>How does it work?</h2>
+      <p>Every letter is turned into numbers, then we look for that string of numbers in pi.
+        Positions are counted from the first digit after the decimal point
+        (3.<b>1</b>415… is position 1).</p>
+      <ul>
+        <li><b>Alphabet:</b> A=01, B=02, … Z=26. <i>ADA</i> becomes <code>010401</code>.</li>
+        <li><b>Phone keypad:</b> one digit per letter, like old phone keyboards. <i>HELLO</i> becomes <code>43556</code>.
+          Shorter codes mean longer words can be found.</li>
+      </ul>
+      <p><b>Sentences:</b> we first look for the whole sentence (spaces ignored). Long sentences need far
+        more digits than exist here, so each word is also found on its own. If a word is still too
+        long, it is split into the longest pieces that do appear in pi.</p>
+    </section>
+  </main>
+
+  <footer>Digits of pi computed with the Chudnovsky algorithm. All searching happens in your browser.</footer>
+
+  <script src="search.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
