@@ -3,7 +3,7 @@
 Find **names and whole sentences** hidden in the first **10,000,000 digits of pi**,
 like [pinames.org](https://pinames.org/), but sentences work too.
 
-Type something like `Emma` or `I love pi` and PI Search shows you where it appears in pi,
+Styled like a royal casino: type something like `Emma` or `I love pi`, hit **SPIN**, and the slot machine shows where it appears in pi,
 with the digits around it highlighted.
 
 ## How it works
