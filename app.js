@@ -30,13 +30,19 @@
     return form.querySelector("input[name=enc]:checked").value;
   }
 
-  function chunkUrl(i) { return "data/pi-" + String(i).padStart(3, "0") + ".bin"; }
+  // Chunks are packed binary (.bin) by default, or plain digits (.txt)
+  // when the manifest says "format": "txt" (for hosts that only serve text).
+  function isText() { return manifest.format === "txt"; }
+
+  function chunkUrl(i) {
+    return "data/pi-" + String(i).padStart(3, "0") + (isText() ? ".txt" : ".bin");
+  }
 
   function fetchChunk(i) {
     return fetch(chunkUrl(i)).then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status + " for " + chunkUrl(i));
-      return r.arrayBuffer();
-    }).then(function (buf) { return P.unpack(new Uint8Array(buf)); });
+      return isText() ? r.text() : r.arrayBuffer();
+    }).then(function (data) { return isText() ? data : P.unpack(new Uint8Array(data)); });
   }
 
   // ---------- Rendering ----------
