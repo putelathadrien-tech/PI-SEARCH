@@ -26,20 +26,23 @@
     }
   };
 
-  /** Uppercase, strip accents and keep only letters and single spaces. */
+  /** Uppercase, strip accents and keep only letters, digits and single spaces. */
   function normalize(text) {
     return String(text || "")
       .normalize("NFD")
       .replace(/[̀-ͯ]/g, "")
       .toUpperCase()
-      .replace(/[^A-Z]+/g, " ")
+      .replace(/[^A-Z0-9]+/g, " ")
       .trim();
   }
 
   function encode(word, encoding) {
     var enc = ENCODINGS[encoding] || ENCODINGS.alpha;
     var out = "";
-    for (var i = 0; i < word.length; i++) out += enc.letter(word[i]);
+    for (var i = 0; i < word.length; i++) {
+      var ch = word[i];
+      out += ch >= "0" && ch <= "9" ? ch : enc.letter(ch); // digits stand for themselves
+    }
     return out;
   }
 

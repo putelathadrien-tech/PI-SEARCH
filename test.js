@@ -7,8 +7,20 @@ const digits = P.unpack(fs.readFileSync(__dirname + "/data/pi-000.bin"));
 
 assert.strictEqual(digits.slice(0, 10), "1415926535");
 assert.strictEqual(P.normalize("  Hélène, héllo!! "), "HELENE HELLO");
+assert.strictEqual(P.normalize("14/03/1999"), "14 03 1999");
 assert.strictEqual(P.encode("ABZ", "alpha"), "010226");
 assert.strictEqual(P.encode("HELLO", "keypad"), "43556");
+
+// Numbers are searched as themselves, alone or mixed with letters.
+assert.strictEqual(P.encode("1999", "alpha"), "1999");
+assert.strictEqual(P.encode("R2D2", "alpha"), "182042");
+assert.strictEqual(P.encode("R2D2", "keypad"), "7232");
+const n = P.search(digits, "14159", "alpha");
+assert.strictEqual(n.whole.code, "14159");
+assert.strictEqual(n.whole.position, 1);
+const date = P.search(digits, "14/03/1999", "alpha");
+assert.strictEqual(date.whole.code, "14031999");
+assert.strictEqual(date.words.length, 3);
 
 // "1415" starts at position 1 (first digit after "3.").
 assert.strictEqual(P.find(digits, "1415").position, 1);

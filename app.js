@@ -49,7 +49,9 @@
 
   function lettersView(letters) {
     return el("div", { "class": "letters" }, letters.map(function (l) {
-      return el("span", null, [el("b", { text: l.letter }), el("small", { text: l.code })]);
+      var parts = [el("b", { text: l.letter })];
+      if (l.code !== l.letter) parts.push(el("small", { text: l.code })); // digits need no code
+      return el("span", null, parts);
     }));
   }
 
@@ -101,13 +103,16 @@
   function render(res, state) {
     results.innerHTML = "";
     if (!res) return;
+    var numeric = /^[0-9 ]+$/.test(res.query);
 
     var wholeCard = el("section", { "class": "card" }, [
-      el("h2", { text: res.isSentence ? "Whole sentence: “" + res.query + "”" : "“" + res.query + "”" })
+      el("h2", { text: res.isSentence ? (numeric ? "All together: “" : "Whole sentence: “") + res.query + "”" : "“" + res.query + "”" })
     ].concat(resultBlock(res.whole, state)));
     if (res.isSentence) {
       wholeCard.appendChild(el("p", { "class": "note",
-        text: "Spaces are ignored, so the code for the whole sentence is " + res.whole.code.length + " digits long." }));
+        text: numeric
+          ? "Spaces and symbols are ignored, so this looks for " + res.whole.code + "."
+          : "Spaces are ignored, so the code for the whole sentence is " + res.whole.code.length + " digits long." }));
     }
     results.appendChild(wholeCard);
 
@@ -127,10 +132,10 @@
     });
     var allFound = res.words.every(function (w) { return w.position !== -1; });
     results.appendChild(el("section", { "class": "card" }, [
-      el("h2", { text: "Word by word" }),
+      el("h2", { text: numeric ? "Part by part" : "Word by word" }),
       el("p", { "class": "note", text: allFound
-        ? "Every word of your sentence is hiding somewhere in pi!"
-        : "Words that are too long are split into the longest pieces found in pi." }),
+        ? (numeric ? "Every part is hiding somewhere in pi!" : "Every word of your sentence is hiding somewhere in pi!")
+        : "Parts that are too long are split into the longest pieces found in pi." }),
       list
     ]));
   }
@@ -224,7 +229,7 @@
     var id = ++searchId;
     if (!P.normalize(q)) {
       results.innerHTML = "";
-      setStatus(q ? "Please type some letters (A–Z)." : "");
+      setStatus(q ? "Please type some letters (A–Z) or digits (0–9)." : "");
       return;
     }
     var enc = selectedEncoding();

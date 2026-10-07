@@ -10,13 +10,13 @@
 <body>
   <header>
     <h1><span class="pi">π</span> PI Search</h1>
-    <p class="tagline">Find names <em>and</em> sentences hidden in the first <span class="total-digits">1,000,000,000</span> digits of pi.</p>
+    <p class="tagline">Find names, sentences <em>and</em> numbers hidden in the first <span class="total-digits">1,000,000,000</span> digits of pi.</p>
   </header>
 
   <main>
     <form id="search-form" autocomplete="off">
       <div class="bar">
-        <input id="q" name="q" type="text" placeholder="Type a name or a sentence…" aria-label="Name or sentence" autofocus>
+        <input id="q" name="q" type="text" placeholder="Type a name, a sentence or a number…" aria-label="Name, sentence or number" autofocus>
         <button type="submit" id="go">Search</button>
       </div>
       <div class="options">
@@ -28,6 +28,8 @@
         <a href="?q=Emma">Emma</a>
         <a href="?q=Hadrien">Hadrien</a>
         <a href="?q=I+love+pi">I love pi</a>
+        <a href="?q=14%2F03%2F1999">14/03/1999</a>
+        <a href="?q=123456789">123456789</a>
         <a href="?q=hello+world&amp;enc=keypad">hello world (keypad)</a>
       </div>
     </form>
@@ -37,13 +39,16 @@
 
     <section class="how">
       <h2>How does it work?</h2>
-      <p>Every letter is turned into numbers, then we look for that string of numbers in pi.
+      <p>Every letter is turned into numbers (digits stay as they are), then we look for that string of numbers in pi.
         Positions are counted from the first digit after the decimal point
         (3.<b>1</b>415… is position 1).</p>
       <ul>
         <li><b>Alphabet:</b> A=01, B=02, … Z=26. <i>ADA</i> becomes <code>010401</code>.</li>
         <li><b>Phone keypad:</b> one digit per letter, like old phone keyboards. <i>HELLO</i> becomes <code>43556</code>.
           Shorter codes mean longer words can be found.</li>
+        <li><b>Numbers:</b> digits are searched as they are, so <i>2024</i> looks for <code>2024</code>.
+          Dates work too: <i>14/03/1999</i> looks for <code>14031999</code>. You can mix letters and digits:
+          <i>R2D2</i> becomes <code>182042</code>.</li>
       </ul>
       <p><b>Big searches:</b> the first 10 million digits load right away, so most answers are instant.
         If something isn't there, PI Search keeps reading pi 10 million digits at a time, up to
